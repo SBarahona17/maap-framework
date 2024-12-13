@@ -21,7 +21,6 @@ import {
     PptLoader,
     TextLoader,
     LlamaIndexLoader,
-    BaseModel,
     LlamaNomicEmbeddingsv1,
     LlamaNomicEmbeddingsv1_5,
     LlamaTitanEmbeddings,
@@ -31,6 +30,7 @@ import {
     LlamaAzureChatAI,
     LlamaBedrock,
     LlamaOpenAi,
+    LlamaTogetherAI,
     LlamaHuggingFace
 } from '../../index.js';
 
@@ -55,6 +55,7 @@ import { LlamaFireworksModel } from '../../models/llamaIndex/llama-fireworks-mod
 import { LlamaFireworksEmbeddings } from '../../embeddings/llamaIndex/llama-fireworks-embeddings.js';
 import { LlamaCohereEmbeddings } from '../../embeddings/llamaIndex/llama-cohere-embeddings.js';
 import { LlamaBedrockEmbeddings } from '../../index.js';
+import { LlamaAnthropic } from '../../models/llamaIndex/llama-anthropic-model.js';
 
 // src/loaders/confluence-loader.ts src/loaders/docx-loader.ts src/loaders/excel-loader.ts src/loaders/json-loader.ts src/loaders/pdf-loader.ts src/loaders/ppt-loader.ts src/loaders/sitemap-loader.ts src/loaders/text-loader.ts src/loaders/web-loader.ts src/loaders/youtube-channel-loader.ts src/loaders/youtube-loader.ts src/loaders/youtube-search-loader.ts
 function getDataFromYamlFile() {
@@ -185,58 +186,65 @@ export function getModelClass() {
             switch (framework) {
                 case 'llamaindex':
                     return new LlamaOpenAi(params);
-                case 'Anyscale':
-                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of Anyscale is required');
+                default:
+                    return new OpenAi(params);
+            }
+        case 'Anyscale':
+            assert(typeof parsedData.llms.model_name === 'string', 'model_name of Anyscale is required');
+            params['modelName'] = parsedData.llms.model_name;
+            return new AnyscaleModel(params);
+        case 'Fireworks':
+            switch (framework) {
+                case 'llamaindex':
+                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of Fireworks is required');
                     params['modelName'] = parsedData.llms.model_name;
-                    return new AnyscaleModel(params);
-
-                case 'Fireworks':
-                    switch (framework) {
-                        case 'llamaindex':
-                            assert(
-                                typeof parsedData.llms.model_name === 'string',
-                                'model_name of Fireworks is required',
-                            );
-                            params['modelName'] = parsedData.llms.model_name;
-                            return new LlamaFireworksModel(params);
-                        default:
-                            assert(
-                                typeof parsedData.llms.model_name === 'string',
-                                'model_name of Fireworks is required',
-                            );
-                            params['modelName'] = parsedData.llms.model_name;
-                            return new Fireworks(params);
-                    }
-                case 'Anthropic':
+                    return new LlamaFireworksModel(params);
+                default:
+                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of Fireworks is required');
+                    params['modelName'] = parsedData.llms.model_name;
+                    return new Fireworks(params);
+            }
+        case 'Anthropic':
+            switch (framework) {
+                case 'llamaindex':
+                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of Anthropic is required');
+                    params['modelName'] = parsedData.llms.model_name;
+                    return new LlamaAnthropic(params);
+                default:
                     assert(typeof parsedData.llms.model_name === 'string', 'model_name of Anthropic is required');
                     params['modelName'] = parsedData.llms.model_name;
                     return new Anthropic(params);
-                case 'Bedrock':
-                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of Bedrock is required');
-                    params['modelName'] = parsedData.llms.model_name;
-                    switch (framework) {
-                        case 'llamaindex':
-                            return new LlamaBedrock(params);
-                        default:
-                            return new Bedrock(params);
-                    }
-                case 'AzureOpenAI':
-                    switch (framework) {
-                        case 'llamaindex':
-                            return new LlamaAzureChatAI(params);
-                        default:
-                            return new AzureChatAI(params);
-                    }
-                case 'Cohere':
-                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of Cohere is required');
-                    params['modelName'] = parsedData.llms.model_name;
-                    return new Cohere(params);
-                case 'TogetherAI':
-                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of TogetherAI is required');
-                    params['modelName'] = parsedData.llms.model_name;
-                    return new TogetherAI(params);
+            }
+        case 'Bedrock':
+            assert(typeof parsedData.llms.model_name === 'string', 'model_name of Bedrock is required');
+            params['modelName'] = parsedData.llms.model_name;
+            switch (framework) {
+                case 'llamaindex':
+                    return new LlamaBedrock(params);
                 default:
-                    return new OpenAi(params);
+                    return new Bedrock(params);
+            }
+        case 'AzureOpenAI':
+            switch (framework) {
+                case 'llamaindex':
+                    assert(typeof parsedData.llms.model_name === 'string', 'model_name of AzureOpenAI is required');
+                    params['modelName'] = parsedData.llms.model_name;
+                    return new LlamaAzureChatAI(params);
+                default:
+                    return new AzureChatAI(params);
+            }
+        case 'Cohere':
+            assert(typeof parsedData.llms.model_name === 'string', 'model_name of Cohere is required');
+            params['modelName'] = parsedData.llms.model_name;
+            return new Cohere(params);
+        case 'TogetherAI':
+            assert(typeof parsedData.llms.model_name === 'string', 'model_name of TogetherAI is required');
+            params['modelName'] = parsedData.llms.model_name;
+            switch (framework) {
+                case 'llamaindex':
+                    return new LlamaTogetherAI(params);
+                default:
+                    return new TogetherAI(params);
             }
         default:
             throw new Error('Unsupported model class name');

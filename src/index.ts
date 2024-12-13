@@ -20,16 +20,16 @@ import { BaseModel } from './interfaces/base-model.js';
 import { SIMPLE_MODELS } from './global/constants.js';
 import { OpenAi } from './models/langChain/openai-model.js';
 import { ConfluenceLoader } from './loaders/confluence-loader.js';
-import { AdaEmbeddings } from './embeddings/ada-embeddings.js';
-import { CohereEmbeddings } from './embeddings/cohere-embeddings.js';
-import { Mistral } from './models/mistral-model.js';
-import { HuggingFace } from './models/huggingface-model.js';
-import { Anthropic } from './models/anthropic-model.js';
-import { GeckoEmbedding } from './embeddings/gecko-embedding.js';
-import { VertexAI } from './models/vertexai-model.js';
-import { Ollama } from './models/ollama-model.js';
-import { AzureChatAI } from './models/azureopenai-model.js';
-import { AzureOpenAiEmbeddings } from './embeddings/azure-embeddings.js';
+import { AdaEmbeddings } from './embeddings/langChain/ada-embeddings.js';
+import { CohereEmbeddings } from './embeddings/langChain/cohere-embeddings.js';
+import { Mistral } from './models/langChain/mistral-model.js';
+import { HuggingFace } from './models/langChain/huggingface-model.js';
+import { Anthropic } from './models/langChain/anthropic-model.js';
+import { GeckoEmbedding } from './embeddings/langChain/gecko-embedding.js';
+import { VertexAI } from './models/langChain/vertexai-model.js';
+import { Ollama } from './models/langChain/ollama-model.js';
+import { AzureChatAI } from './models/langChain/azureopenai-model.js';
+import { AzureOpenAiEmbeddings } from './embeddings/langChain/azure-embeddings.js';
 import { RealTimeDataLoader } from './loaders/real-time-data-loader.js';
 import { TogetherAIEmbeddings } from './embeddings/langChain/togetherai-embeddings.js';
 import { Cohere } from './models/langChain/cohere-model.js';
@@ -45,9 +45,11 @@ import { LlamaAzureEmbeddings } from './embeddings/llamaIndex/llama-azure-embedd
 import { LlamaGeckoEmbeddings } from './embeddings/llamaIndex/llama-gecko-embeddings.js';
 import { LlamaFireworksModel } from './models/llamaIndex/llama-fireworks-model.js';
 import { Fireworks } from './models/langChain/fireworks-model.js';
-import { LlamaAzureChatAI } from './models/llamaindex/llama-azureopenai-model.js';
-import { LlamaOpenAi } from './models/llamaindex/llama-openai-model.js';
-import { LlamaBedrock } from './models/llamaindex/llama-bedrock-model.js';
+import { LlamaAzureChatAI } from './models/llamaIndex/llama-azureopenai-model.js';
+import { LlamaOpenAi } from './models/llamaIndex/llama-openai-model.js';
+import { LlamaBedrock } from './models/llamaIndex/llama-bedrock-model.js';
+import { LlamaTogetherAI } from './models/llamaIndex/llama-together-model.js';
+import { LlamaAnthropic } from './models/llamaIndex/llama-anthropic-model.js';
 import { LlamaHuggingFace } from './models/llamaIndex/llama-huggingface-model.js';
 
 export {
@@ -101,7 +103,9 @@ export {
     LlamaAzureEmbeddings,
     LlamaGeckoEmbeddings,
     LlamaFireworksModel,
-    Fireworks
+    LlamaAnthropic,
+    LlamaTogetherAI,
+    Fireworks,
 };
 export * from './convertMaapToChatbotFramework.js';
 export * from './Rerank.js';

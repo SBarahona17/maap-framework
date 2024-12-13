@@ -1,32 +1,32 @@
-import { FireworksLLM, ChatMessage } from 'llamaindex';
-import createDebugMessages from 'debug';
+import { ChatMessage, TogetherLLM } from 'llamaindex';
 import { BaseModel } from '../../interfaces/base-model.js';
 import { Chunk, ConversationHistory } from '../../global/types.js';
+import createDebugMessages from 'debug';
 
-export class LlamaFireworksModel extends BaseModel {
-    private readonly debug = createDebugMessages('maap:model:FireworksAI');
-    private apiKey: string;
+export class LlamaTogetherAI extends BaseModel {
+    private readonly debug = createDebugMessages('maap:model:TogetherAI');
     private readonly modelName: string;
-    private maxTokens: number;
-    private model: FireworksLLM;
+    private readonly apiKey: string;
+    private readonly maxTokens: number;
+    private model: TogetherLLM;
 
-    constructor(params?: { temperature?: number; apiKey?: string; modelName?: string; maxTokens?: number }) {
+    constructor(params?: { temperature?: number; modelName?: string; apiKey?: string; maxTokens?: number }) {
         super(params?.temperature ?? 0.1);
-        this.modelName = params?.modelName ?? 'accounts/fireworks/models/mixtral-8x7b-instruct';
-        this.apiKey = params?.apiKey ?? process.env.FIREWORKS_API_KEY;
+        this.modelName = params?.modelName ?? 'mistralai/Mixtral-8x7B-Instruct-v0.1';
+        this.apiKey = params?.apiKey ?? process.env.TOGETHER_AI_API_KEY;
         this.maxTokens = params?.maxTokens ?? 2048;
     }
 
     override async init(): Promise<void> {
-        this.model = new FireworksLLM({
+        this.model = new TogetherLLM({
             temperature: this.temperature,
-            apiKey: this.apiKey,
             model: this.modelName,
+            apiKey: this.apiKey,
             maxTokens: this.maxTokens,
         });
     }
 
-    override async runQuery(
+    protected async runQuery(
         system: string,
         userQuery: string,
         supportingContext: Chunk[],
@@ -39,15 +39,11 @@ export class LlamaFireworksModel extends BaseModel {
             userQuery,
         );
         const result = await this.model.chat({ messages: pastMessages });
-        this.debug('FireworksAI response -', result);
-        if (result.message && typeof result.message.content === 'string') {
-            return result.message.content;
-        } else {
-            throw new Error('Invalid response format from model');
-        }
+        this.debug('TogetherAI response -', result);
+        return result.message.content.toString();
     }
 
-    override async runStreamQuery(
+    protected async runStreamQuery(
         system: string,
         userQuery: string,
         supportingContext: Chunk[],
@@ -59,14 +55,6 @@ export class LlamaFireworksModel extends BaseModel {
             pastConversations,
             userQuery,
         );
-        const stream = await this.model.chat({ messages: pastMessages, stream: true });
-        return stream;
-    }
-
-    public getModel() {
-        if (!this.model) {
-            this.init();
-        }
-        return this.model;
+        return await this.model.chat({ messages: pastMessages, stream: true });
     }
 }
