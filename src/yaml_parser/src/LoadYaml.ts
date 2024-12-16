@@ -32,7 +32,8 @@ import {
     LlamaOpenAi,
     LlamaTogetherAI,
     Ollama,
-    LlamaOllama
+    LlamaOllama,
+    LlamaAnyscale, LlamaCohere,
 } from '../../index.js';
 
 import { MongoDBAtlas } from '../../vectorDb/mongo-db-atlas.js';
@@ -193,7 +194,12 @@ export function getModelClass() {
         case 'Anyscale':
             assert(typeof parsedData.llms.model_name === 'string', 'model_name of Anyscale is required');
             params['modelName'] = parsedData.llms.model_name;
-            return new AnyscaleModel(params);
+            switch (framework) {
+                case 'llamaindex':
+                    return new LlamaAnyscale(params);
+                default:
+                    return new AnyscaleModel(params);
+            }
         case 'Fireworks':
             switch (framework) {
                 case 'llamaindex':
@@ -237,7 +243,12 @@ export function getModelClass() {
         case 'Cohere':
             assert(typeof parsedData.llms.model_name === 'string', 'model_name of Cohere is required');
             params['modelName'] = parsedData.llms.model_name;
-            return new Cohere(params);
+            switch (framework) {
+                case 'llamaindex':
+                    return new LlamaCohere(params);
+                default:
+                    return new Cohere(params);
+            }
         case 'TogetherAI':
             assert(typeof parsedData.llms.model_name === 'string', 'model_name of TogetherAI is required');
             params['modelName'] = parsedData.llms.model_name;
