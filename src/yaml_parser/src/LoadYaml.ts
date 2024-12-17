@@ -368,7 +368,7 @@ export function getEmbeddingModel() {
                     return new LlamaTogetherAIEmbeddings({ modelName: parsedData.embedding.model_name });
                 default:
                     return new TogetherAIEmbeddings({ modelName: parsedData.embedding.model_name });
-            }       
+                }       
         default:
             // Handle unsupported class name (optional)
             return new NomicEmbeddingsv1_5(); // Or throw an error
