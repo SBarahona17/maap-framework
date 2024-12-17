@@ -246,6 +246,17 @@ export function getModelClass() {
                 default:
                     return new TogetherAI(params);
             }
+        case 'HuggingFace':
+            assert(typeof parsedData.llms.model_name === 'string', 'model_name of HuggingFace is required');
+            params['modelName'] = parsedData.llms.model_name;
+            params['endpointUrl'] = parsedData.llms.endpoint_url;
+
+            switch (framework) {
+                case 'llamaindex':
+                    return new LlamaHuggingFace(params);
+                default:
+                    return new LlamaHuggingFace(params);
+            } 
         default:
             throw new Error('Unsupported model class name');
         // // Handle unsupported class name (optional)
@@ -346,19 +357,7 @@ export function getEmbeddingModel() {
                     return new LlamaTogetherAIEmbeddings({ modelName: parsedData.embedding.model_name });
                 default:
                     return new TogetherAIEmbeddings({ modelName: parsedData.embedding.model_name });
-            }
-        case 'HuggingFace':
-            switch (framework) {
-                case 'llamaindex':
-                    return new LlamaHuggingFace({
-                        modelName: parsedData.embedding.model_name,
-                        temperature: parsedData.embedding.temperature,
-                        maxNewTokens: parsedData.embedding.max_new_tokens,
-                        endpointUrl: parsedData.embedding.endpoint_url
-                    });
-            default:
-                return new NomicEmbeddingsv1_5();
-        }        
+            }       
         default:
             // Handle unsupported class name (optional)
             return new NomicEmbeddingsv1_5(); // Or throw an error
