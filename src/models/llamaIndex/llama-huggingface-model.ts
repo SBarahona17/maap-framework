@@ -1,4 +1,4 @@
-import { HuggingFaceInferenceAPI, ChatMessage, MessageContentTextDetail, ChatResponse } from 'llamaindex'
+import { HuggingFaceInferenceAPI, ChatMessage, ChatResponse } from 'llamaindex'
 import createDebugMessages from 'debug';
 import { BaseModel } from '../../interfaces/base-model.js';
 import { Chunk, ConversationHistory } from '../../global/types.js';
@@ -11,18 +11,14 @@ export class LlamaHuggingFace extends BaseModel {
 
     constructor(params?: { modelName?: string; temperature?: number; maxTokens?: number}) {
         super(params?.temperature ?? 0.1);
-        console.log("\n\n executing constructor");        
-
         this.modelName = params?.modelName ?? 'mistralai/Mixtral-8x7B-Instruct-v0.1';        
         this.maxTokens = params?.maxTokens ?? 300;
     }
 
     override async init(): Promise<void> {
-        console.log("\n\n executing init");
-
         this.model = new HuggingFaceInferenceAPI({ 
             model: this.modelName,
-            accessToken: process.env.INFERENCE_API_KEY,
+            accessToken: process.env.HUGGINGFACE_INFERENCE_API_KEY,
             maxTokens: this.maxTokens,
         });
     }
@@ -33,8 +29,6 @@ export class LlamaHuggingFace extends BaseModel {
         supportingContext: Chunk[],
         pastConversations: ConversationHistory[]
     ): Promise<string> {
-        console.log("\n\n executing runQuery");
-
         const pastMessages: ChatMessage[] = this.generatePastMessagesLlama(
             system,
             supportingContext,
@@ -53,7 +47,6 @@ export class LlamaHuggingFace extends BaseModel {
         supportingContext: Chunk[],
         pastConversations: ConversationHistory[]
     ): Promise<any> {
-        console.log("\n\n executing runStreamQuery");
         const pastMessages: ChatMessage[] = this.generatePastMessagesLlama(
             system,
             supportingContext,
