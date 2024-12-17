@@ -266,8 +266,8 @@ export function getModelClass() {
                 case 'llamaindex':
                     return new LlamaHuggingFace(params);
                 default:
-                    return new LlamaHuggingFace(params);
-            } 
+                    throw new Error('Unsupported model class name');
+            }
         default:
             throw new Error('Unsupported model class name');
         // // Handle unsupported class name (optional)
