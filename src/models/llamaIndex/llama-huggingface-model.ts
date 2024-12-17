@@ -20,6 +20,9 @@ export class LlamaHuggingFace extends BaseModel {
             model: this.modelName,
             accessToken: process.env.HUGGINGFACE_INFERENCE_API_KEY,
             maxTokens: this.maxTokens,
+            temperature: this.temperature,
+            verbose: false,
+            maxRetries: 1
         });
     }
 
