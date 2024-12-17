@@ -9,14 +9,14 @@ export class LlamaHuggingFace extends BaseModel {
     private readonly maxTokens: number;
     private model: HuggingFaceInferenceAPI;
 
-    constructor(params?: { modelName?: string; temperature?: number; maxTokens?: number}) {
+    constructor(params?: { modelName?: string; temperature?: number; maxTokens?: number }) {
         super(params?.temperature ?? 0.1);
-        this.modelName = params?.modelName ?? 'mistralai/Mixtral-8x7B-Instruct-v0.1';        
+        this.modelName = params?.modelName ?? 'mistralai/Mixtral-8x7B-Instruct-v0.1';
         this.maxTokens = params?.maxTokens ?? 300;
     }
 
     override async init(): Promise<void> {
-        this.model = new HuggingFaceInferenceAPI({ 
+        this.model = new HuggingFaceInferenceAPI({
             model: this.modelName,
             accessToken: process.env.HUGGINGFACE_INFERENCE_API_KEY,
             maxTokens: this.maxTokens,
@@ -59,8 +59,8 @@ export class LlamaHuggingFace extends BaseModel {
         return await this.model.chat({ messages: pastMessages, stream: true });
     }
 
-    private extractAssistantMessage( result: ChatResponse): string{
+    private extractAssistantMessage(result: ChatResponse): string {
         const resultParts = (result.message.content as string).split("<|assistant|>");
-        return resultParts[resultParts.length-1];
+        return resultParts[resultParts.length - 1];
     }
 }
