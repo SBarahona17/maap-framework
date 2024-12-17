@@ -261,7 +261,6 @@ export function getModelClass() {
         case 'HuggingFace':
             assert(typeof parsedData.llms.model_name === 'string', 'model_name of HuggingFace is required');
             params['modelName'] = parsedData.llms.model_name;
-            params['endpointUrl'] = parsedData.llms.endpoint_url;
 
             switch (framework) {
                 case 'llamaindex':
