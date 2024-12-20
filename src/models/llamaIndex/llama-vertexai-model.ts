@@ -58,6 +58,7 @@ export class LlamaVertexAI extends BaseModel {
             temperature: this.temperature,
             topP: this.topP,
             model: model,
+            maxTokens: this.maxTokens,
             session: new GeminiVertexSession({
                 location: process.env.GOOGLE_VERTEX_LOCATION,
                 project: process.env.GOOGLE_VERTEX_PROJECT,

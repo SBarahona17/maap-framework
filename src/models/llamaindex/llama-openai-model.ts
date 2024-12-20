@@ -22,6 +22,8 @@ export class LlamaOpenAi extends BaseModel {
             temperature: this.temperature,
             model: this.modelName,
             apiKey: process.env.OPENAI_API_KEY,
+            topP: this.topP,
+            maxTokens: this.maxTokens,
         });
     }
 

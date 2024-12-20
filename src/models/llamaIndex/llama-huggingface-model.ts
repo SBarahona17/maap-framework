@@ -24,7 +24,8 @@ export class LlamaHuggingFace extends BaseModel {
             maxTokens: this.maxTokens,
             temperature: this.temperature,
             verbose: false,
-            maxRetries: 1
+            maxRetries: 1,
+            topP: this.topP
         });
     }
 

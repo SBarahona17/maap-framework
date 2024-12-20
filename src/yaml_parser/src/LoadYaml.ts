@@ -279,6 +279,7 @@ export function getModelClass() {
             if (parsedData.llms.base_url) params['baseUrl'] = parsedData.llms.base_url;
             switch (framework) {
                 case 'llamaindex':
+                    // This model does not support topP and maxTokens parameters
                     return new LlamaOllama(params);
                 default:
                     return new Ollama(params);

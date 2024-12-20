@@ -25,6 +25,7 @@ export class LlamaTogetherAI extends BaseModel {
             model: this.modelName,
             apiKey: this.apiKey,
             maxTokens: this.maxTokens,
+            topP: this.topP,
         });
     }
 
