@@ -179,6 +179,8 @@ export function getModelClass() {
     const params = {};
     if (parsedData.llms.temperature) params['temperature'] = parsedData.llms.temperature;
     if (parsedData.llms.max_tokens) params['maxTokens'] = parsedData.llms.max_tokens;
+    if (parsedData.llms.top_p) params['topP'] = parsedData.llms.top_p;
+
     switch (parsedData.llms.class_name) {
         case 'VertexAI':
             assert(typeof parsedData.llms.model_name === 'string', 'model_name of VertexAI is required');

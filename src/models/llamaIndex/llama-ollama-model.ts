@@ -7,12 +7,16 @@ export class LlamaOllama extends BaseModel{
     private readonly debug = createDebugMessages('maap:model:Bedrock');
     private readonly modelName: string;
     private readonly baseUrl: string;
+    private readonly maxTokens: number;
+    private topP: number;
     private model: Ollama;
 
-    constructor(params?: { modelName?: string; baseUrl?: string; temperature?: number }) {
+    constructor(params?: { modelName?: string; baseUrl?: string; temperature?: number; maxTokens?: number; topP?: number }) {
         super(params?.temperature ?? 0.1);
         this.modelName = params.modelName ?? "llama2";
         this.baseUrl = params.baseUrl ?? "http://localhost:11434";
+        this.maxTokens = params.maxTokens;
+        this.topP = params.topP;
     }
 
     override async init(): Promise<void> {

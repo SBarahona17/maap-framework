@@ -11,6 +11,7 @@ export class LlamaVertexAI extends BaseModel {
     //private apiKey: string;
     private model: Gemini;
     private topP: number;
+    private maxTokens: number;
 
     constructor(params?: {
         temperature?: number;
@@ -24,6 +25,7 @@ export class LlamaVertexAI extends BaseModel {
         this.modelName = params?.modelName ?? GEMINI_MODEL.GEMINI_PRO;
         //this.apiKey = params?.apiKey ?? process.env.ANTHROPIC_API_KEY;
         this.topP = params?.topP ?? 0.1;
+        this.maxTokens = params.maxTokens;
     }
 
     override async init(): Promise<void> {
