@@ -36,6 +36,7 @@ import { makeMongoDbEmbeddedContentStore, logger } from 'mongodb-rag-core';
 import { MongoDBCrud } from '../../../src/db/mongodb-crud.js';
 import { AggMqlOperator } from '../../../src/db/dynamic-agg-operator.js';
 import { readFileSync } from 'fs';
+import { defaultUserPrompt } from 'llamaindex';
 
 // Load MAAP base classes
 const model = getModelClass();
@@ -101,11 +102,30 @@ const findContent = makeDefaultFindContent({
     embedder,
     store: embeddedContentStore,
     findNearestNeighborsOptions: {
-        k: 2,
+        k: 100,
         path: 'embedding',
         indexName: vectorSearchIndexName,
         numCandidates: numCandidates,
         minScore: minScore,
+        filter: {
+            "$or": [
+                {
+                    "metadata.slug": {
+                        $in: [
+                          "BOM",
+                          "CMV"
+                        ]
+                      }
+                  },
+                  {
+                    "metadata.firstName": "Xaviera",
+                    "metadata.lastName": "McKenna"
+                  },
+                  {
+                    "metadata.sa_campaign_slug": "BOM"
+                  }
+            ]
+        }
     },
 });
 
@@ -152,6 +172,40 @@ const makeUserMessage: MakeUserMessageFunc = async function ({
     ${structuredQueryContext}
 
     User query: ${originalUserMessage}`;
+
+    if(originalUserMessage.includes("set campaign:")){
+        global.campaign = originalUserMessage.split("set campaign:")[1].replace(" ", "").toUpperCase();
+        global.filter = {
+            "metadata.slug":global.campaign
+        }
+
+        const tempfindContent = makeDefaultFindContent({
+            embedder,
+            store: embeddedContentStore,
+            findNearestNeighborsOptions: {
+                k: 2,
+                path: 'embedding',
+                indexName: vectorSearchIndexName,
+                numCandidates: numCandidates,
+                minScore: minScore,
+                filter: {
+                    "metadata.slug": global.filter
+                }
+            },
+        });
+
+        var tempFindContentWithPreprocess = withQueryPreprocessor({
+            findContentFunc: tempfindContent,
+            queryPreprocessor: dummyPreprocess,
+        });
+
+        var temp: GenerateUserPromptFunc = makeRagGenerateUserPrompt({
+            findContent: tempFindContentWithPreprocess,
+            makeUserMessage,
+        });
+        
+        config.conversationsRouterConfig.generateUserPrompt = temp;
+    }
     return { role: 'user', content: contentForLlm };
 };
 

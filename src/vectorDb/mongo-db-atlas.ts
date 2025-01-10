@@ -165,6 +165,30 @@ export class MongoDBAtlas implements BaseDb {
                             "numDimensions": numDimensions,
                             "path": this.embeddingKey,
                             "similarity": this.similarityFunction
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.slug"
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.firstName"
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.lastName"
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.campaigns"
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.o_campaign_slug"
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.sa_campaign_slug"
                         }
                     ]
                 }

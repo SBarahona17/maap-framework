@@ -638,6 +638,12 @@ function getNAddFileLoader(
                     }),
                 );
                 break;
+            case 'json':
+                dataloaders.push(new JsonLoader({
+                    object: JSON.parse(readFileSync(filePath, 'utf-8')),
+                    pickKeysForEmbedding: data.pickKeysForEmbedding,
+                  }));
+                break;
             default:
                 // Handle unsupported file type (optional)
                 console.log(`Failed to load file: ${file}`);
