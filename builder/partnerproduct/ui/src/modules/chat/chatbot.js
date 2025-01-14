@@ -8,9 +8,8 @@ import { H1, H2 } from '@leafygreen-ui/typography';
 import './chatbot.css';
 
 const suggestedPrompts = [
-  "Why should I use the MongoDB Chatbot Framework?",
-  "How does the framework use Atlas Vector Search?",
-  "Do you support using LLMs from OpenAI?",
+  "set slug:EAF",
+  "set name:Tollmann,Kamillah"
 ];
 
 function ChatModule() {
@@ -23,7 +22,7 @@ function ChatModule() {
           {/* <InputBarTrigger suggestedPrompts={suggestedPrompts}  /> */}
           <FloatingActionButtonTrigger text="My MongoDB AI" />
           <ModalView
-            initialMessageText="Welcome to MongoDB AI Assistant. What can I help you with?"
+            initialMessageText="Welcome to MongoDB AI Assistant. Please set a name and slug."
             initialMessageSuggestedPrompts={suggestedPrompts}
           />
         </>

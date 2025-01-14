@@ -32,10 +32,14 @@ export function withQueryPreprocessor(
 ): FindContentFunc {
     return async ({ query }) => {
 
-        let slug = 'SRR';
-        if(query.includes("set campaign:")){
-            slug = query.split("set campaign:")[1].replace(" ", "").toUpperCase();
+        if(query.includes("set slug:")){
+            global.slug = query.split("set slug:")[1].replace(" ", "").toUpperCase();
+        } else if(query.includes("set name:")){
+            let listQuery = query.split("set name:");
+            global.firstName = listQuery[1].split(",")[1];
+            global.lastName = listQuery[1].split(",")[0];
         }
+
 
         const findContent = makeDefaultFindContent({
             embedder,
@@ -49,14 +53,14 @@ export function withQueryPreprocessor(
                 filter: {
                     "$or": [
                         {
-                            "metadata.slug": slug
+                            "metadata.slug": global.slug
                         },
                         {
-                            "metadata.firstName": "Xaviera",
-                            "metadata.lastName": "McKenna"
+                            "metadata.firstName": global.firstName,
+                            "metadata.lastName": global.lastName
                         },
                         {
-                            "metadata.sa_campaign_slug": "BOM"
+                            "metadata.sa_campaign_slug": global.slug
                         }
                     ]
                 }
@@ -66,8 +70,6 @@ export function withQueryPreprocessor(
         //const { preprocessedQuery } = await queryPreprocessor({ C });
         // TODO: support adding conversation context as an optional parameter to the findContentFunc
         const { queryEmbedding, content } = await findContent({ query: query });
-
-        console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n testing");
 
         return { queryEmbedding, content };
     };
