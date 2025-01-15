@@ -198,6 +198,7 @@ const config: AppConfig = {
         conversations,
         generateUserPrompt,
         systemPrompt,
+        maxUserMessagesInConversation: 1000
     },
     maxRequestTimeoutMs: 30000,
     serveStaticSite: true,
