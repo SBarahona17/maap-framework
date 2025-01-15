@@ -175,6 +175,13 @@ function makeWrappedMongoDbConversationsService(dbName: string) {
         create: async (params?: CreateConversationParams) => {
             const newConversation = await baseService.create(params);
             (global as any).currentConversationId = newConversation._id;
+
+            global.firstMessage = true;
+            global.inChatSelection = true;
+            global.inFormChat = false;
+            global.firstQuestion = true;
+            global.answeredQuestions = 0
+
             return newConversation;
         },
     };

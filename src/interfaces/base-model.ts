@@ -32,7 +32,7 @@ export abstract class BaseModel {
         userQuery: string,
         supportingContext: Chunk[],
         conversationId: string = 'default',
-    ): Promise<string> {
+    ): Promise<string> {        
         //obtain the conversation history from the conversationService from MongoDB chatbot server
         let currentConversationFromConversationService = await (global as any).conversations.findById({ _id: (global as any).currentConversationId });
         let conversationArray: ConversationHistory[] = [];
@@ -162,6 +162,12 @@ export abstract class BaseModel {
         userQuery: string,
     ) {
         const pastMessages: ChatMessage[] = [];
+
+        if(global.inFormChat){
+            pastMessages.push({ content: system, role: 'system' });
+            pastMessages.push({ content: `${userQuery}?`, role: 'user' });
+            return pastMessages;
+        }
 
         for (let message of pastConversations) {
             const roleExists = pastMessages.some(

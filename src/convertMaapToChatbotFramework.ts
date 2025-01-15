@@ -12,15 +12,123 @@ import { DataSource } from 'mongodb-rag-ingest/sources';
 import { BaseReranker } from './interfaces/base-reranker.js';
 import { Rerank } from './Rerank.js';
 
+
+// Hardwired values
+var questions_instructions = [
+    "This response type is 'Select One'",
+    "This response type is 'Text Field'",
+    "This response type is 'Number'",
+]
+
+var questions = [
+    "Have you been diagnosed with Non-Hodgkin's Lymphoma AFTER being exposed to Roundup?",
+    "Do you know the name of the facility where you were diagnosed with NHL? Please list name, address and phone of diagnosing facility",
+    "What would be your best estimate of total amount of years you used Round Up?"
+]
+
+async function formCompletion (userMessage: string, baseModel: BaseModel): Promise<string> {
+    if(global.firstQuestion){
+        global.firstQuestion = false;
+        return "Great! Let's start with the first question.\nQuestion: " + questions[0];
+    }
+
+    var instructions = questions_instructions[global.answeredQuestions];
+    var question = questions[global.answeredQuestions];
+
+    const modelResponse = await baseModel.query(
+        `
+You are a chatbot that take responses from the user and extract the information needed to be saved in a form database.
+A question will be given, suppose the user already knows this question and it is just answering it.
+The user will answer with natural language such as 'I have' instead of 'yes', your job is to extract the specific information needed.
+Do not ask questions, only answer with the extracted information.
+Always add a small comment on how you obtained this information and a form type JSON with the extracted data.
+If information is not given just mention the lack of it.
+The output should follow the next exampl:
+'''
+Extracted Data:
+{
+    "{a summary of the question in kebab case}": "yes",
+}
+
+Source of Extracted Data:
+{The analysis}
+'''
+
+The data extracted from the user response must follow the instructions:
+"${instructions}"
+And here is the question that the user is answering:
+"${question}"
+        `,
+        userMessage
+        ,[]
+    );
+
+    global.answeredQuestions = global.answeredQuestions + 1;
+    if(global.answeredQuestions >= questions.length){
+        global.inFormChat = false;
+        return modelResponse + "\n\nThere are no more questions, switching to normal chat.";
+    } else {
+        return modelResponse + "\n\nNext question: " + questions[global.answeredQuestions];
+    }
+}
+
+
+function chatSelection(userMessage: string): string {
+    if(global.firstMessage){
+        global.firstMessage = false
+        return 'There seems to be some missing information about your campaign form. Would you like to complete it?';
+    }
+
+    if(userMessage == 'yes'){
+        global.inFormChat = true;
+    }
+
+    global.inChatSelection = false;
+    return null;
+}
+
+
 export async function convertBaseModelToChatLlm(baseModel: BaseModel): Promise<ChatLlm> {
     await baseModel.init();
     return {
         async answerQuestionAwaited({ messages }) {
+            const userMessage = messages[messages.length - 1] as UserMessage;
+
+            // Logic for controlled chat
+            var exactUserMessage = userMessage.content.split('User query: ')[1];
+
+            var assistantResponse = null;
+            if(global.inChatSelection == true){
+                assistantResponse = chatSelection(exactUserMessage);
+            }
+            
+            if(global.inFormChat) {
+                assistantResponse = await formCompletion(exactUserMessage, baseModel);                
+            }
+
+            if(assistantResponse != null){
+                return {
+                    role: 'assistant',
+                    content: assistantResponse
+                }
+            }
+
+            if(exactUserMessage.includes("set name:")){
+                return {
+                    role: 'assistant',
+                    content: 'The name has been set.'
+                } 
+            } else if(exactUserMessage.includes("set slug:")){
+                return {
+                    role: 'assistant',
+                    content: 'The slug has been set.'
+                } 
+            }
+            
             const systemMessage = messages.find((m) => m.role === 'system');
             // this only takes into account the latest user message,
             // which should have previous messages and retrieved context information
             // all in the `userMessage.contentForLlm` field.
-            const userMessage = messages[messages.length - 1] as UserMessage;
             const modelResponse = await baseModel.query(
                 systemMessage.content,
                 // User content for LLM if it exists (which it should in the implementation),
