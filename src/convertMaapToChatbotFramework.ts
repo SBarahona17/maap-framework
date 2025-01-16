@@ -37,21 +37,18 @@ async function formCompletion (userMessage: string, baseModel: BaseModel): Promi
 
     const modelResponse = await baseModel.query(
         `
-You are a chatbot that take responses from the user and extract the information needed to be saved in a form database.
-A question will be given, suppose the user already knows this question and it is just answering it.
+You are a chatbot that takes the response from a question and extracts the important data.
 The user will answer with natural language such as 'I have' instead of 'yes', your job is to extract the specific information needed.
-Do not ask questions, only answer with the extracted information.
-Always add a small comment on how you obtained this information and a form type JSON with the extracted data.
-If information is not given just mention the lack of it.
-The output should follow the next exampl:
+The output should follow the next example:
 '''
 Extracted Data:
 {
-    "{a summary of the question in kebab case}": "yes",
+    "is_diagnosed": "yes",
+    "phone_number": "+43 345 345"
 }
 
 Source of Extracted Data:
-{The analysis}
+The user answered the question of "Is diagnosed?" with a yes and offer the phone number afterwards.
 '''
 
 The data extracted from the user response must follow the instructions:
