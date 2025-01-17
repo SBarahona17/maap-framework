@@ -176,11 +176,15 @@ function makeWrappedMongoDbConversationsService(dbName: string) {
             const newConversation = await baseService.create(params);
             (global as any).currentConversationId = newConversation._id;
 
+            // Resets global values of structured chatbot
             global.firstMessage = true;
             global.inChatSelection = true;
             global.inFormChat = false;
             global.firstQuestion = true;
             global.answeredQuestions = 0
+            global.slug = "";
+            global.firstName = "";
+            global.lastName = "";
 
             return newConversation;
         },
