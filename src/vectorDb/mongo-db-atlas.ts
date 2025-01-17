@@ -189,6 +189,10 @@ export class MongoDBAtlas implements BaseDb {
                         {
                             "type": "filter",
                             "path": "metadata.sa_campaign_slug"
+                        },
+                        {
+                            "type": "filter",
+                            "path": "metadata.faq_slug"
                         }
                     ]
                 }

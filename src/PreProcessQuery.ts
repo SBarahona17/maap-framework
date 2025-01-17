@@ -55,7 +55,10 @@ export function withQueryPreprocessor(
                         },
                         {
                             "metadata.sa_campaign_slug": global.slug
-                        }
+                        },
+                        {
+                            "metadata.faq_slug": global.slug
+                        }                        
                     ]
                 }
             },
