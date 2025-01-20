@@ -29,7 +29,7 @@ var questions = [
 async function formCompletion (userMessage: string, baseModel: BaseModel): Promise<string> {
     if(global.firstQuestion){
         global.firstQuestion = false;
-        return "Great! Let's start with the first question.\nQuestion: " + questions[0] + "\nInteraction Explanation:\nStarting the query function.\n";
+        return "Great! Let's start with the first question.\nQuestion: " + questions[0] + "\n\n**Interaction Explanation:**\nStarting the query function.\n";
     }
 
     var instructions = questions_instructions[global.answeredQuestions];
@@ -47,7 +47,8 @@ Extracted Data:
     "phone_number": "+43 345 345"
 }
 
-Interaction Explanation:
+
+**Interaction Explanation:**
 The user answered the question of "Is diagnosed?" with a yes and offer the phone number afterwards.
 '''
 
@@ -65,7 +66,7 @@ And here is the question that the user is answering:
         global.inFormChat = false;
         return modelResponse + "\n\nThere are no more questions, switching to regular chat.";
     } else {
-        return modelResponse + "\n\nNext question: " + questions[global.answeredQuestions];
+        return modelResponse + "\n\n**Next question:**\n" + questions[global.answeredQuestions];
     }
 }
  
@@ -73,7 +74,7 @@ And here is the question that the user is answering:
 function chatSelection(userMessage: string): string {
     if(global.firstMessage){
         global.firstMessage = false
-        return 'There seems to be some missing information about your campaign form. Would you like to complete it?\nInteraction Explanation:\nAsking if user would like to fill the query';
+        return 'There seems to be some missing information about your campaign form. Would you like to complete it?\n\n**Interaction Explanation:**\nAsking if user would like to fill the query';
     }
 
     global.inChatSelection = false;
@@ -81,7 +82,7 @@ function chatSelection(userMessage: string): string {
         global.inFormChat = true;
         return null;
     } else {
-        return 'Thank you, returning to regular chat.\nInteraction Explanation:\nThe user has rejected to fill the query.'
+        return 'Thank you, returning to regular chat.\n\n**Interaction Explanation:**\nThe user has rejected to fill the query.'
     }
 }
 
@@ -93,7 +94,7 @@ export async function convertBaseModelToChatLlm(baseModel: BaseModel): Promise<C
             const userMessage = messages[messages.length - 1] as UserMessage;
 
             // Logic for controlled chat
-            var exactUserMessage = userMessage.content.split('User query: ')[1];
+            var exactUserMessage = userMessage.content;
 
             var assistantResponse = null;
             if(global.inChatSelection == true){
@@ -114,12 +115,12 @@ export async function convertBaseModelToChatLlm(baseModel: BaseModel): Promise<C
             if(exactUserMessage.includes("set name:")){
                 return {
                     role: 'assistant',
-                    content: 'The name has been set.\nInteraction Explanation:\nThe user has set a new name\n'
+                    content: 'The name has been set.\n\n**Interaction Explanation:**\nThe user has set a new name\n'
                 } 
             } else if(exactUserMessage.includes("set slug:")){
                 return {
                     role: 'assistant',
-                    content: 'The slug has been set.\nInteraction Explanation:\nThe user has set a new slug.'
+                    content: 'The slug has been set.\n\n**Interaction Explanation:**\nThe user has set a new slug.'
                 } 
             }
             

@@ -14,6 +14,9 @@ export interface PreProcessQueryResults {
  */
 export type PreProcessQuery = ({ query, conversation }: PreProcessQueryParams) => Promise<PreProcessQueryResults>;
 
+
+
+
 /**
   Wrap a {@link FindContentFunc} with a query preprocessor
   to mutate the query before searching for content.
@@ -64,6 +67,17 @@ export function withQueryPreprocessor(
             },
         });
         const { queryEmbedding, content } = await findContent({ query: query });
+
+        if (global.slug == null || global.slug == ""){
+            if (content != null){
+                content.forEach(document => {
+                    if('o_campaign_slug' in document['metadata']){
+                        global.slug = document.metadata.o_campaign_slug;
+                    }
+                })
+            }
+        }
+
         return { queryEmbedding, content };
     };
 }

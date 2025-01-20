@@ -8,7 +8,9 @@ import { H1, H2 } from '@leafygreen-ui/typography';
 import './chatbot.css';
 
 const suggestedPrompts = [
-  "set name:Tollmann,Kamillah"
+  "set name:Tollmann,Kamillah",
+  "set name:Wunder,Avalanche",
+  "set name:Whirlig,Yodelga"
 ];
 
 function ChatModule() {

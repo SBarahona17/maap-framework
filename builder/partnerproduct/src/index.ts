@@ -127,6 +127,10 @@ const makeUserMessage: MakeUserMessageFunc = async function ({
     content,
     originalUserMessage,
 }): Promise<OpenAiChatMessage & { role: 'user' }> {
+    if(global.inFormChat || global.inChatSelection){
+        return { role: 'user', content: originalUserMessage };
+    }
+
     const chunkSeparator = '~~~~~~';
     const context = content.map((c) => c.text).join(`\n${chunkSeparator}\n`);
     // Run the structured query to populate the alternate retrieval technique results as context
